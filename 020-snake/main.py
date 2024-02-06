@@ -19,9 +19,8 @@ screen.listen()
 screen.onkey(key="Left", fun=snake.turn_left)
 screen.onkey(key="Right", fun=snake.turn_right)
 
-# Starting with snake of length 3
-for _ in range(0, 3):
-    snake.extend()
+# Create the initial snake
+snake.create()
 
 continue_game = True
 while continue_game:
@@ -42,12 +41,12 @@ while continue_game:
             snake.get_head().xcor() < -290 or \
             snake.get_head().ycor() > 270 or \
             snake.get_head().ycor() < -280:
-        scoreboard.game_over()
-        continue_game = False
+        scoreboard.reset()
+        snake.reset()
 
     # Detect collision of head with any segment of the tail
     if snake.collision_with_tail():
-        scoreboard.game_over()
-        continue_game = False
+        scoreboard.reset()
+        snake.reset()
 
 screen.exitonclick()

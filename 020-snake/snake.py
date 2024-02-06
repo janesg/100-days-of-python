@@ -17,6 +17,11 @@ class Snake:
 
         return False
 
+    def create(self):
+        # Starting with snake of length 3
+        for _ in range(0, 3):
+            self.extend()
+
     def extend(self):
         new_segment = Turtle(visible=False)
         new_segment.shape("square")
@@ -48,3 +53,9 @@ class Snake:
         if len(self.segments) > 0:
             new_heading = self.segments[0].heading() - 90
             self.segments[0].setheading(new_heading)
+
+    def reset(self):
+        for seg in self.segments:
+            seg.hideturtle()
+        self.segments.clear()
+        self.create()
