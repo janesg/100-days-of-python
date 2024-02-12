@@ -59,10 +59,9 @@ win = Tk()
 win.title("Pomodoro")
 win.config(padx=100, pady=20, background=YELLOW)
 
-win.after(1000, )
 canvas = Canvas(width=210, height=340, background=YELLOW, highlightthickness=0)
 tomato_img = PhotoImage(file="./tomato.png")
-img = canvas.create_image(105, 160, image=tomato_img)
+canvas.create_image(105, 160, image=tomato_img)
 # Note: x & y are positional arguments; *args
 action = canvas.create_text(105, 20, text="Timer", fill=GREEN, font=(FONT_NAME, 24, "bold"))
 timer_text = canvas.create_text(105, 180, text=TIMER_START, fill="white", font=(FONT_NAME, 28, "bold"))
