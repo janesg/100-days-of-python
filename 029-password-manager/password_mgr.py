@@ -2,8 +2,32 @@ import random
 import pyperclip
 from tkinter import *
 from tkinter import messagebox
+import json
 
 FONT = ("Arial", 10, "normal")
+
+
+def search():
+    site = website.get()
+
+    if len(site) == 0:
+        messagebox.showerror(title="Invalid Search", message="No website has been specified")
+    else:
+        with open("./pwd_data.json", mode="r") as f:
+            try:
+                file_data = json.load(f)
+            except (FileNotFoundError, json.decoder.JSONDecodeError):
+                # File not yet created or exists but is empty
+                file_data = {}
+
+        entry = file_data.get(site)
+
+        if entry is not None:
+            msg = f"Searching for: {site}\n\nFound:\n  Email: {entry['email']}\n  Pwd: {entry['password']}"
+        else:
+            msg = f"Searching for: {site}\n\nNo results found !!"
+
+        messagebox.showinfo(title="Search Results", message=msg)
 
 
 def generate_password():
@@ -48,8 +72,20 @@ def add_data():
         messagebox.showerror(title="Invalid Data", message="One or more fields has been left blank")
     else:
         if messagebox.askokcancel(title=site, message=f"Details entered:\nEmail: {nm}\nPassword: {password}\nOk to save ?"):
-            with open("./pwd_data.txt", mode="a") as f:
-                f.write(f"{site} | {nm} | {password}\n")
+            # We're not able to open for both read and write, such that:
+            #   - file is created if doesn't exist
+            #   - positioned to beginning
+            with open("./pwd_data.json", mode="r") as f:
+                try:
+                    file_data = json.load(f)
+                except (FileNotFoundError, json.decoder.JSONDecodeError):
+                    # File not yet created or exists but is empty
+                    file_data = {}
+
+            # Open for write, create file if doesn't exist, position at beginning
+            with open("./pwd_data.json", mode="w") as f:
+                file_data.update({site: {"email": nm, "password": password}})
+                json.dump(file_data, f, indent=4)
 
             website.delete(0, END)
             name.delete(0, END)
@@ -68,9 +104,11 @@ canvas.grid(row=0, column=1)
 
 lab1 = Label(text="Website:", font=FONT)
 lab1.grid(row=1, column=0, sticky=E)
-website = Entry(width=38, font=FONT)
-website.grid(row=1, column=1, columnspan=2, sticky=W)
+website = Entry(width=26, font=FONT)
+website.grid(row=1, column=1, sticky=W)
 website.focus()
+search = Button(text="Search", width=15, font=FONT, command=search)
+search.grid(row=1, column=2, sticky=W)
 
 lab2 = Label(text="Email/Username:", font=FONT)
 lab2.grid(row=2, column=0, sticky=E)
@@ -81,8 +119,8 @@ lab3 = Label(text="Password:", font=FONT)
 lab3.grid(row=3, column=0, sticky=E)
 pword = Entry(width=26, font=FONT)
 pword.grid(row=3, column=1, sticky=W)
-gen_pword = Button(text="Generate Password", font=FONT, command=generate_password)
-gen_pword.grid(row=3, column=2)
+gen_pword = Button(text="Generate Password", width=15, font=FONT, command=generate_password)
+gen_pword.grid(row=3, column=2, sticky=W)
 
 add = Button(text="Add", width=22, font=FONT, command=add_data)
 add.grid(row=4, column=1, sticky=W)
