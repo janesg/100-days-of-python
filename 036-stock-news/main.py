@@ -32,11 +32,13 @@ t_minus_1_data = stock_data["Time Series (Daily)"][data_dates[1]]
 t_minus_2_data = stock_data["Time Series (Daily)"][data_dates[2]]
 t_minus_1_close = float(t_minus_1_data["4. close"])
 t_minus_2_close = float(t_minus_2_data["4. close"])
-diff = abs(t_minus_1_close - t_minus_2_close)
-print(f"T-1 Close: {t_minus_1_close}, T-2 Close: {t_minus_2_close} / Diff: {diff} : 5% Diff: {t_minus_1_close * 0.05}")
+diff = t_minus_1_close - t_minus_2_close
+five_pct_t_minus_1_close = t_minus_1_close * 0.05
+print(f"T-1 Close: {t_minus_1_close}, T-2 Close: {t_minus_2_close} / Diff: {diff} : 5% Diff: {five_pct_t_minus_1_close}")
 
 # Has price changed by 5% or more
-if diff >= t_minus_1_close * 0.05:
+if abs(diff) >= five_pct_t_minus_1_close:
+    indicator = "🔺" if diff >= 0.0 else "🔻"
 
     NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
@@ -53,24 +55,6 @@ if diff >= t_minus_1_close * 0.05:
 
     news_data = response.json()
     headlines = [article["title"] for article in news_data["articles"]]
-    print(f"Latest news on {STOCK}:")
+    print(f"Latest news on {indicator}{STOCK}:")
     for line in headlines:
         print(f"\t{line}")
-
-## STEP 3: Use twilio.com/docs/sms/quickstart/python
-# Send a separate message with each article's title and description to your phone number. 
-#HINT 1: Consider using a List Comprehension.
-
-
-
-#Optional: Format the SMS message like this: 
-"""
-TSLA: 🔺2%
-Headline: Were Hedge Funds Right About Piling Into Tesla Inc. (TSLA)?. 
-Brief: We at Insider Monkey have gone over 821 13F filings that hedge funds and prominent investors are required to file by the SEC The 13F filings show the funds' and investors' portfolio positions as of March 31st, near the height of the coronavirus market crash.
-or
-"TSLA: 🔻5%
-Headline: Were Hedge Funds Right About Piling Into Tesla Inc. (TSLA)?. 
-Brief: We at Insider Monkey have gone over 821 13F filings that hedge funds and prominent investors are required to file by the SEC The 13F filings show the funds' and investors' portfolio positions as of March 31st, near the height of the coronavirus market crash.
-"""
-
