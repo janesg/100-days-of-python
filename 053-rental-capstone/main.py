@@ -31,7 +31,8 @@ prices = [clean_price(price.get_text()) for price in soup.select("span.PropertyC
 links = [link.get("href") for link in soup.select("a.StyledPropertyCardDataArea-anchor")]
 
 chrome_options = webdriver.ChromeOptions()
-chrome_options.add_experimental_option("detach", True)
+# chrome_options.add_experimental_option("detach", True)
+chrome_options.add_argument("--headless=new") # for Chrome >= 109
 
 driver = webdriver.Chrome(options=chrome_options)
 
@@ -41,11 +42,10 @@ try:
         driver.get(FORM_URL)
 
         # Rather than hard-code an explicit sleep period, wait for the submit button to become clickable
-        submit_button = (WebDriverWait(driver, 10)
-               .until(EC.element_to_be_clickable((By.XPATH, '//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div[1]/div'))))
+        submit_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div[1]/div')))
 
         # Get all 3 answer inputs with 1 call
-        inputs = driver.find_elements(By.CSS_SELECTOR, "input[type='text']")
+        inputs = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "input[type='text']")))
 
         inputs[0].send_keys(addresses[idx])
         inputs[1].send_keys(prices[idx])
