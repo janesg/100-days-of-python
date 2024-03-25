@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Static Webpage</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <h1>{{ 5 * 'hello...' }} world</h1>
+    <h2>Random Number: {{ rand_num }}</h2>
+    <h2>{{ 'Random Number: ' + rand_num|string }}</h2>
+    <a href="{{ url_for('show_blog', num=3)}}">Check out our amazing blog in latin...</a>
+</body>
+<footer>
+    <p>&copy Copyright {{ year }}</p>
+</footer>
+</html>
