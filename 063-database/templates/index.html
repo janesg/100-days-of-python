@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Library</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body>
+    <h1>My Library</h1>
+
+    {% if books|length == 0 %}
+      <p>Library is empty.</p>
+    {% else %}
+      <ul>
+        {% for book in books: %}
+          <li>
+            <a href="{{ url_for('delete', id=book['id']) }}" class="delete-link"><i class="fas fa-trash-alt"></i></a>
+            {{ " : {} - {} - {}/10 : ".format(book['title'], book['author'], book['rating']) }}
+            <a href="{{ url_for('edit', id=book['id']) }}">Edit rating</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <a href="{{ url_for('add')}}">Add New Book</a>
+  </body>
+</html>
