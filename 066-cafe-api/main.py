@@ -75,6 +75,61 @@ def get_cafes_by_location():
         return jsonify(error={"Not found": f"No cafes found for location, {query_location}"}), 404
 
 
+@app.route("/add", methods=["POST"])
+def add_new_cafe():
+    try:
+        data = request.get_json()
+
+        # new_cafe = Cafe(
+        #     name = data.get("name"),
+        #     map_url = data.get("map_url"),
+        #     img_url = data.get("img_url"),
+        #     location = data.get("location"),
+        #     seats = data.get("seats"),
+        #     coffee_price = data.get("coffee_price"),
+        #     has_toilet = bool(data.get("has_toilet")),
+        #     has_wifi = bool(data.get("has_wifi")),
+        #     has_sockets = bool(data.get("has_sockets")),
+        #     can_take_calls = bool(data.get("can_take_calls"))
+        # )
+
+        new_cafe = Cafe(**{field: value for field, value in data.items()})
+
+        db.session.add(new_cafe)
+        db.session.commit()
+
+        return jsonify(response={"status": "success", "message": f"Added new cafe, {new_cafe.name}"})
+
+    except Exception as e:
+        return jsonify(response={"status": "error", "message": f"Failed to add new cafe, {e}"}), 500
+
+
+@app.route("/update-price/<int:id>", methods=["PATCH"])
+def update_coffee_price(id: int):
+    new_price = request.args.get("new_price")
+    # cafe: Cafe = db.session.execute(db.select(Cafe).where(Cafe.id == id)).scalar()
+    cafe: Cafe = db.session.get(Cafe, id)
+
+    if cafe:
+        cafe.coffee_price = new_price
+        db.session.commit()
+        return jsonify(response={"status": "success", "message": f"Updated coffee price for cafe, {cafe.name}"})
+    else:
+        return jsonify(response={"status": "error", "message": f"No cafe found with id of {id}"}), 404
+
+
+@app.route("/delete/<int:id>", methods=["DELETE"])
+def delete_cafe(id: int):
+    # cafe: Cafe = db.session.execute(db.select(Cafe).where(Cafe.id == id)).scalar()
+    cafe: Cafe = db.session.get(Cafe, id)
+
+    if cafe:
+        db.session.delete(cafe)
+        db.session.commit()
+        return jsonify(response={"status": "success", "message": f"Deleted cafe, {cafe.name}"})
+    else:
+        return jsonify(response={"status": "error", "message": f"No cafe found with id of {id}"}), 404
+
 
 # HTTP GET - Read Record
 
